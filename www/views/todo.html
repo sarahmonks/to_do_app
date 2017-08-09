@@ -1,0 +1,124 @@
+<!--[Assignment header Start]
+Author: Sarah Monks
+Assignment: WE4.0 Mobile Web Applications, Digital Skills Academy
+Student ID Sarah Monks:  D15126869
+Date: 2016/06/26
+Ref: checkbox in angular: https://docs.angularjs.org/api/ng/input/input%5Bcheckbox%5D
+Ref: angular forms: https://docs.angularjs.org/guide/forms
+Ref: prevent form submission when input invalid: http://stackoverflow.com/questions/16263158/angularjs-prevent-form-submission-when-input-validation-fails
+Ref: form ngSubmit: https://docs.angularjs.org/api/ng/directive/ngSubmit
+Ref: Generate a unique id ng-repeat: http://stackoverflow.com/questions/23264789/angularjs-ng-repeat-to-assign-generate-a-new-unique-id
+Ref: using ng-show: https://scotch.io/tutorials/how-to-use-ngshow-and-nghide
+Ref: using ng-show example: http://www.w3schools.com/angular/tryit.asp?filename=try_ng_ng-show
+[Assignment header End]-->
+
+
+<!--this is the view which contains the form for the user to enter new tasks for the to do list-->
+<!--it also contains the to do list area which will be dynamically updated from the model as the user enters new tasks-->
+<h2>{{pageHeading}}</h2>
+<p class="intro_paragraph">{{introParagraph}}</p><!--introParagraph is created in our controller and will be inserted here-->
+
+
+<div id="todo_form_wrapper" class="container_small">	
+	<!--Angular form-->
+	<!--use the novalidate attribute to disable the browser's native form validation-->
+	<!--use the form name attribute to publish the form instance into the scope-->
+	<form name="todo_form" id="todo_form" class="todo_form" data-ng-submit="addTask()" data-ng-model="todo_form" novalidate>
+		<!--Task Name Area-->
+		<div class="form_divider">
+			<!--use data-ng-model to bind the user input to our model and display it straight away below-->
+			<label for="task_name">Task Name*</label>		
+			<input id="task_name" name="task_name" type="text" data-ng-model="newTask.name" maxlength="50" placeholder="e.g research one!!eleven!" required/>
+		
+			<span class="feedback_icon">
+		
+				<i class="fa fa-check-circle"></i><!--we use a css class .ng-invalid.ng-touched (in index.css) to display the check symbol when user input is valid-->
+				<i class="fa fa-times-circle"></i><!--and to display the X symbol when user input is invalid-->
+			</span>
+			<span class="new_task">{{newTask.name}}</span><!--display the task name entered by the user-->
+
+
+			<!--if the form is submitted or if the task name field is "touched" and is not filled in then we display an error message-->
+			<div class="error_message" ng-show="todo_form.$submitted || (todo_form.task_name.$touched && !(todo_form.task_name.$untouched))">
+      				<div ng-show="todo_form.task_name.$error.required">Please fill in a task name.</div>
+			
+			</div>
+		</div><!--/form_divider-->
+
+		<!-------------------------------------Task Due Day Area--------------------------------------->
+		<div class="form_divider">
+			<!--use data-ng-model to bind the user input to our model and display it straight away below-->
+			<p>Due Day</p>
+			<label class="radio_button" for="today"><input type="radio" id="today" data-ng-model="newTask.day" value="Today" checked />Today</label>
+	
+			<label class="radio_button" for="tommorrow"><input type="radio" id="tommorrow" data-ng-model="newTask.day" value="Tomorrow" />Tomorrow</label>
+			<span class="new_task">{{newTask.day}}</span><!--display the day which the user has chosen-->
+		</div><!--/form_divider-->
+
+
+		<!--use the ng-disabled attribute to prevent the form from submitting if it is invalid-->
+		<input class="button_style" type="submit" ng-disabled="todo_form.$invalid" value="Add Task" />
+	</form><!--/todo_form-->
+</div><!--/todo_form_wrapper-->
+
+
+
+<!--we have defined a function in our todoController called checkIfTasksExist() which checks the current length of the tasks array.-->
+<!--if it is 0 then the function returns false and this section is not displayed.-->
+<!--if the tasks array is greater than 0, then it returns true and the ng-show directive enables the following section to be displayed-->
+
+<div id="tasks_list_wrapper" ng-show="checkIfTasksExist()">
+	<h3>My To Do List</h3>
+
+	<ul id="tasks_list" class="container_small">
+		<li class='item_row'><!--create a list item to contain headings for the to do list displayed to the user-->
+			<span class='item-column column-xxs-offset-1 column-xxs-5'>Name</span>
+			<span class='item-column column-xxs-3'>Status</span>
+			<span class='item-column column-xxs-2'><i class='fa fa-check'></i></span>
+			<span class='item-column column-xxs-1'><i class='fa fa-times'></i></span>
+		</li>
+		
+		<li class='list_item item_row' data-ng-repeat="currentTask in tasks">
+				
+			<span class="item_row">		
+				<span class='item-column column-xxs-1 text_center'>{{$index + 1}}</span>
+				<span class='item-column column-xxs-5'>{{currentTask.name}}</span>
+				<span class='item-column column-xxs-3'>
+					<span class="turquoise_text bold_text text_shadow" ng-show="currentTask.done == false">To Do</span>
+					<span class="green_text bold_text text_shadow" ng-show="currentTask.done == true">Done</span>
+				</span>
+		
+				<span class='item-column column-xxs-2 no_padding'>
+					<!--we create a unique id for each checkbox using $index-->
+					<!--this is so we can associate each checkbox with a corresponding label-->
+					<input id="checkbox-{{$index}}" type="checkbox" ng-model="currentTask.done" ng-click="completeTask($index, currentTask.done)">
+					<label for="checkbox-{{$index}}">
+						<!--we create a span tag within the label tag for the checkbox so that we can do our own custom styling to the checkbox-->
+						<!--using the ng-class directive we can specify that we want to display specific font awesome icons depending on whether the currentTask is completed or not-->
+						<span>
+						<i class="fa" ng-class="{'fa-check-square-o': currentTask.done == true, 'fa-square-o': currentTask.done == false}"></i>
+						</span>
+					</label>
+				</span>
+
+				<span class='item-column column-xxs-1 no_padding'>
+					<span class="icon_button text_right" data-ng-click="deleteTask($index)">
+						<i class='fa fa-times'></i>
+					</span>
+				</span>
+			</span><!--/item_row-->
+
+			<!--we create a new row in the current list item to display the due day of the current task-->
+			<span class="item_row">			
+				<span class='item-column column-xxs-offset-1 column-xxs-11'>
+					<i class="fa fa-clock-o"></i><!--display the time font awesome icon next to the due day-->
+					<!--use the ng class directive to dynamically set a class on the text containing the due day-->
+					<!--if the task is done then make the text green and if it is not done then make the text turquoise-->
+					<span ng-class="{'green_text bold_text text_shadow': currentTask.done == true, 'turquoise_text bold_text text_shadow': currentTask.done == false}">
+						{{currentTask.day}}
+					</span>
+				</span>	
+			</span><!--/item_row-->
+		</li><!--/list_item-->			
+	</ul><!--/tasks_list-->
+</div><!--/tasks_list_wrapper-->

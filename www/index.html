@@ -1,0 +1,95 @@
+<!--[Assignment header Start]
+Author: Sarah Monks
+Assignment: WE4.0 Mobile Web Applications, Digital Skills Academy
+Student ID Sarah Monks:  D15126869
+Date: 2016/06/26
+Ref: using index inside ng-repeat: http://stackoverflow.com/questions/17925355/how-can-i-use-the-index-inside-a-ng-repeat-to-enable-a-class-and-show-a-div
+Ref: ngSwipeLeft directive: https://docs.angularjs.org/api/ngTouch/directive/ngSwipeLeft
+Ref: adding multiple classes using ng-class http://stackoverflow.com/questions/18871277/adding-multiple-class-using-ng-class
+Ref: how to create multiple scrolling divs: http://stackoverflow.com/questions/4646708/css-how-to-get-scrollbars-for-div-inside-container-of-fixed-height
+[Assignment header End]-->
+
+<!DOCTYPE html>
+<html ng-app="todoModule" >
+
+<head>
+<meta charset="utf-8">
+<!--specify user scalable as no, in order to mimick a native app-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<script src="js/js-functions.js"></script>
+<script src="js/angular.min.js"></script>
+<script src="js/angular-route.min.js"></script>
+<script src="js/angular-touch.min.js"></script>
+<script src="js/controllers.js"></script>
+<script src="phonegap.js"></script>
+<link rel="stylesheet" type="text/css" href="css/index.css"/>	
+
+</head>
+<!--associate the mainController with the body as this will be used on all "pages"/views for the header menu and the side panel-->
+<body data-ng-controller="mainController">
+	<!--use the html5 header tag-->
+	<header>
+		<!--use an unordered list to create our header menu nav links-->
+		<!--we use the ng-class directive to apply the css swipe_left styling to the ul whenever panelIsOpen is true-->
+		<!--this will cause the header to move 80% to the left and reveal the side panel-->
+
+		<ul class="header_nav" ng-class="{'swipe_left': panelIsOpen == true}">
+			<li class="header_menu_item" data-ng-repeat="currentMenuItem in menuItems" data-ng-click="selectMenuItem($index)">
+				<!--we want to apply the current class whenever a particular menu item is selected.-->
+				<!--in order to do this we use the ng-class directive-->
+
+				<a class="header_menu_link" ng-class="{'current': $index == selectedItem}" href="{{currentMenuItem.href}}">
+					<i class="fa {{currentMenuItem.font_awesome_icon}}"></i>
+				</a>
+			</li>
+			<!--the following list item represents a side panel button for opening and closing the side panel-->
+        		<!--use the ng-click directive to call the toggleSidePanel() function when this button is pressed-->
+			<!--using the ng-class directive we can apply the current class to this list item which will add some css styling-->
+        		<li class="header_menu_item" data-ng-click="toggleSidePanel()">
+				<span class="header_menu_link" ng-class="{'current': panelIsOpen == true}">
+					<i class="fa fa-navicon"></i>
+				</span>
+			</li>  	  
+       	 	</ul><!--/header_nav-->		
+	</header>
+	
+	<!--add the scrollable class to the container_wrapper for smooth scrolling on touch device.-->
+	<!--we also add the ng-swipe-left directive from the ngTouch module so that when the user swipes left 
+		on the container_wrapper, the container_wrapper will move 80% to the left.
+		We achieve this by using the ng-class directive which allows us to set the 
+		swipe_left class on the container when panelIsOpen is set to true. 
+		Once the container slides over, the side panel which lies underneath, will be revealed--> 
+
+	<div id="container_wrapper" class="scrollable" ng-class="{'swipe_left': panelIsOpen == true}" ng-swipe-left="panelIsOpen = true">
+		<div class="container"> 
+			<span class="logo"><i class="fa fa-check-circle"></i></span>
+			<div data-ng-view>
+				<!--our individual views will be displayed here-->
+
+			</div>
+		</div><!--/container-->
+	</div><!--/container_wrapper-->
+
+	<!--create a side panel area-->
+	<!--add the scrollable class to the side panel for smooth scrolling on touch device.-->
+	<!--we also add the ng-swipe-right directive so that when the user swipes right 
+	on the panel we can close the panel and reveal the container_wrapper again.--> 
+
+	<div id="panel_area" class="scrollable" ng-swipe-right="panelIsOpen = false">		
+		<div class="panel_container">
+			<div class="panel_header"><p>Menu</p></div>
+			<ul>
+				<!--we use the ng-repeat directive to iterate through the menu items defined in the mainController and display them as links-->
+				<li class="side_menu_item" data-ng-repeat="currentMenuItem in menuItems">
+					<!--when any link is clicked we want to slide the main container back over to main focus so we call the toggleSidePanel() function to achieve this-->
+					<!--we also call the selectMenuItem() function so that we can style the new current nav item in the header of the app-->
+					<a class="side_menu_link" href="{{currentMenuItem.href}}" data-ng-click="toggleSidePanel();selectMenuItem($index)">
+						<i class="panel_icon fa {{currentMenuItem.font_awesome_icon}}"></i>{{currentMenuItem.name}}<i class="fa fa-chevron-right"></i>
+					</a>
+					
+				</li>	
+			</ul>
+		</div><!--/panel_container-->
+	</div><!--/panel_area-->
+</body>
+</html>

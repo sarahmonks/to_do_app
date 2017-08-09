@@ -1,0 +1,23 @@
+<!--[Assignment header Start]
+Author: Sarah Monks
+Assignment: WE4.0 Mobile Web Applications, Digital Skills Academy
+Student ID Sarah Monks:  D15126869
+Date: 2016/06/26
+[Assignment header End]-->
+
+<h2>{{pageHeading}}</h2>
+<p class="intro_paragraph">{{introParagraph}}</p><!--introParagraph is defined in the historyController-->
+<div id="history_list" >
+	<ul class="container_small">
+		<li class='list_item item_row' data-ng-repeat="currentActivity in activityList">		
+			<span class='item_row'>				
+				<span class='item-column column-xxs-12'>You 
+					<span class="turquoise_text">{{currentActivity.actionType}}</span> a task called: 
+					<span class="turquoise_text">{{currentActivity.taskName}}</span>.
+
+				</span>
+				<span class='item-column column-xxs-12'>Time: {{currentActivity.time.hours}}:{{currentActivity.time.minutes}}:{{currentActivity.time.seconds}}</span>
+			</span>		
+		</li>		
+	</ul>
+</div>
