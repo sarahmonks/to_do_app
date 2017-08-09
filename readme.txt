@@ -1,7 +1,7 @@
 /**********************************************************
 * Author: Sarah Monks
 * Assignment: WE4.0 Mobile Web Applications, Digital Skills Academy
-* Student ID: D15126869
+* Student ID: 
 * Date : 2016/06/26
 ***********************************************************/
 This is the Turquoise version of this app.
