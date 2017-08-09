@@ -4,6 +4,8 @@
 * Student ID: D15126869
 * Date : 2016/06/26
 ***********************************************************/
+This is the Turquoise version of this app.
+
 There are three different views/"pages" in this project.
 
 home: landing page
